@@ -2,7 +2,7 @@
 layout: default
 slug: home
 ---
-{%- assign articles = site.data.articles | sort: "date" | reverse -%}
+{%- assign articles = site.writeups | sort: "date" | reverse -%}
 <section class="hero" aria-labelledby="hero-title">
   <div class="wrap hero-inner">
     <p class="pill reveal"><span class="pill-dot" aria-hidden="true"></span>Security research · Bug bounty</p>

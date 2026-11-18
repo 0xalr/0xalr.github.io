@@ -1,0 +1,36 @@
+---
+title: "Account Takeover via Insecure Email Change — Critical Vulnerability"
+date: 2025-09-05
+medium_url: https://medium.com/@0xalr/account-takeover-via-insecure-email-change-critical-vulnerability-b67d44d7f600
+cover: /assets/img/covers/2025-09-email-change-ato.webp
+cover_alt: "Burp Suite request to /Api/v2.0/User/Rename with victim and attacker email parameters, answered with 204 No Content."
+cover_fit: cover
+cover_pos: "left top"
+summary: "While trying user-management actions on a REST API, a `/User/Rename` endpoint turned out to change any account's email through the `emailId` and `renameEmailId` parameters, with no authorization or ownership check. That allowed full account takeover."
+tags: ["Account Takeover", "Access Control", "API"]
+---
+{% raw %}<h3 dir="auto">Introduction.</h3>
+<p dir="auto">While conducting testing on one of the platforms, I discovered a serious Account Takeover (ATO) vulnerability that allows an attacker to take complete control of any user’s account by changing the email associated with the account to one controlled by the attacker, without any additional verification or authentication.</p>
+<h3 dir="auto">How I Discovered the Vulnerable Endpoint</h3>
+<p dir="auto">I started creating a new account on the platform and trying out the different features (login, edit data, recover password, etc.).</p>
+<p dir="auto">I noticed that most of the operations are done via the REST API using the path:</p>
+<pre>/Api/v2.0/</pre>
+<p dir="auto">This gave me the impression that the platform relies heavily on API endpoints to manage users.</p>
+<p dir="auto">When I tested all the functions in the application I reviewed the endpoints I registered in the burp.</p>
+<p dir="auto">I noticed the following endpoints that attracted me:</p>
+<pre>/Api/v2.0/User/<br>/Api/v2.0/Profile/<br>/Api/v2.0/Account/</pre>
+<p dir="auto">I sent the request to the repeater which has the following endpoint `/<strong>Api/v2.0/User</strong>/`</p>
+<p dir="auto">I started trying some popular words that create actions for the user like Update, Delete, Rename, edit, {id-victim-user}</p>
+<pre>/Api/v2.0/User/delete<br>/Api/v2.0/User/add<br>/Api/v2.0/User/Rename<br>/Api/v2.0/User/Update<br>/Api/v2.0/User/edit<br>/Api/v2.0/User/{id-victim-user}</pre>
+<p dir="auto">I was surprised that the following endpoint `/<strong>Api/v2.0/User/Rename</strong>` is working and returning an error in response asking for the `emailId` and `renameEmailId` parameters.</p>
+<p dir="auto">one something that came to my mind is to put the victim’s email in the emailId parameter and the attacker’s email in the renameEmailId parameter.</p>
+<p dir="auto">After testing, it became clear that it is possible to change any user’s email to my own, meaning that the process is done without any Authorization or Ownership Validation.</p>
+<figure><img src="{% endraw %}{{ '/assets/img/writeups/account-takeover-insecure-email-change/01.png' | relative_url }}{% raw %}" alt="" loading="lazy" decoding="async"></figure>
+<h3 dir="auto">Impact</h3>
+<p dir="auto">Full control over any user’s account.</p>
+<h3 dir="auto">Report</h3>
+<figure><img src="{% endraw %}{{ '/assets/img/writeups/account-takeover-insecure-email-change/02.png' | relative_url }}{% raw %}" alt="" loading="lazy" decoding="async"></figure>
+<h3 dir="auto">📌 Conclusion</h3>
+<p dir="auto">This vulnerability demonstrates the danger of neglecting verification when updating sensitive data such as email. Despite its technical simplicity, its impact is devastating, as it allows an attacker to take over a full account with the click of a button.</p>
+<h4 dir="auto"><strong>Contact me:</strong></h4><p dir="auto">x: <a href="https://x.com/00xalr" target="_blank" rel="noopener">https://x.com/00xalr</a></p>
+<p dir="auto">linkedin: <a href="https://www.linkedin.com/in/abdalkreem-dagga" target="_blank" rel="noopener">https://www.linkedin.com/in/abdalkreem-dagga</a></p>{% endraw %}

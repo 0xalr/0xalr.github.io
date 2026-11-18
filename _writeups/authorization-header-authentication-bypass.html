@@ -1,0 +1,49 @@
+---
+title: "No Username. No Password. Just a Header — A $3,000 Authentication Bypass"
+date: 2026-06-03
+medium_url: https://medium.com/@0xalr/no-username-no-password-just-a-header-a-3-000-authentication-bypass-9b42432b6c69
+cover: /assets/img/covers/2026-06-auth-header-bypass.webp
+cover_alt: "Burp Suite request and 401 Unauthorized response for a redacted API endpoint."
+cover_fit: contain
+summary: "Every API endpoint pulled from a JavaScript file returned 401, until tracing the client's HTTP Basic auth logic suggested the backend might only check that the header exists. Sending an empty `Authorization: Basic` header bypassed authentication across nearly 50 endpoints. The result was a Critical report and a $3,000 bounty."
+tags: ["Authentication", "JS Analysis", "API"]
+---
+{% raw %}<p dir="auto">First of all, Alhamdulillah. Every finding teaches something new, and this one reminded me that sometimes the most critical vulnerabilities can be discovered through simple curiosity and a willingness to question assumptions.</p>
+<h3 dir="auto">Introduction</h3>
+<p dir="auto">While performing reconnaissance on a target, I came across an interesting authentication bypass vulnerability that ultimately resulted in a Critical severity report and a $3,000 bounty.</p>
+<p dir="auto">The issue was discovered through a combination of JavaScript analysis, API endpoint enumeration, and understanding how the authentication mechanism was implemented behind the application.</p>
+<p dir="auto">This write-up explains the discovery process and the root cause of the vulnerability.</p>
+<h3 dir="auto">Testing and thinking</h3>
+<p dir="auto">This finding started during a normal reconnaissance session.</p>
+<p dir="auto">While enumerating subdomains, I came across a subdomain that immediately redirected users to another website for authentication. At first, it looked like a standard login flow, so before allowing the redirect to complete, I opened the page source to see if there was anything interesting exposed.</p>
+<p dir="auto">Inside the source code, I found a JavaScript file being loaded by the application. Since JavaScript files often contain useful information, I downloaded it and started reviewing its contents.</p>
+<p dir="auto">My first goal was to extract any API endpoints used by the application.</p>
+<p dir="auto">After some quick analysis, I found several API endpoints and immediately opened Burp Suite to start testing them.</p>
+<p dir="auto">Unfortunately, every request returned the same response:</p>
+<figure><img src="{% endraw %}{{ '/assets/img/writeups/authorization-header-authentication-bypass/01.png' | relative_url }}{% raw %}" alt="" loading="lazy" decoding="async"><figcaption dir="auto">401 Unauthorized</figcaption></figure>
+<p dir="auto">At that point, the endpoints appeared to be properly protected.</p>
+<p dir="auto">However, while looking at the responses, a question came to mind:</p>
+<p dir="auto"><strong><em>How does the application know that a user is authenticated?</em></strong></p>
+<p dir="auto">Instead of continuing to test the endpoints blindly, I went back to the JavaScript file and started tracing the authentication logic used by the application.</p>
+<p dir="auto">After searching through the code, I found the following snippet:</p>
+<pre>a1&amp;&amp;n1.set(<br>    &quot;Authorization&quot;,<br>    &quot;Basic &quot; +<br>    btoa(<br>        (a1.username || &quot;&quot;) +<br>        &quot;:&quot; +<br>        (a1.password<br>            ? unescape(encodeURIComponent(a1.password))<br>            : &quot;&quot;)<br>    )<br>)</pre>
+<p dir="auto">This immediately caught my attention.</p>
+<p dir="auto">The application was using HTTP Basic Authentication and expected requests to contain an Authorization header built from a username and password.</p>
+<p dir="auto">My first thought was to search for valid credentials.</p>
+<ul><li dir="auto">I checked GitHub.</li><li dir="auto">I checked URLScan.</li></ul><p dir="auto">I searched for configuration files, leaked credentials, historical data, and anything that might reveal a username or password for the application.</p>
+<p dir="auto">After spending some time searching, I found nothing.</p>
+<p dir="auto">At that point, a different idea came to mind…………</p>
+<p dir="auto"><strong><em>Instead of trying to find valid credentials, what if the backend only checked whether the Authorization header existed?</em></strong></p>
+<p dir="auto">To test this theory, I sent the same request again but added the following header:</p>
+<pre>Authorization: Basic</pre>
+<p dir="auto">After send the request, the response came back:</p>
+<figure><img src="{% endraw %}{{ '/assets/img/writeups/authorization-header-authentication-bypass/02.png' | relative_url }}{% raw %}" alt="" loading="lazy" decoding="async"></figure>
+<p dir="auto">The most interesting part was that the issue was not limited to a single endpoint. After discovering that simply adding the Authorization: Basic header bypassed authentication, I tested the same behavior across nearly 50 API endpoints extracted from the JavaScript file. The bypass worked consistently, providing access to functionality related to viewing, creating, modifying, and deleting customer data, as well as various internal system settings. No valid username or password was required — only the presence of the Authorization header.</p>
+<p dir="auto">This ultimately resulted in a Critical severity report and a bounty of $3,000.</p>
+<figure><img src="{% endraw %}{{ '/assets/img/writeups/authorization-header-authentication-bypass/03.png' | relative_url }}{% raw %}" alt="" loading="lazy" decoding="async"></figure>
+<h3 dir="auto">Root Cause</h3>
+<p dir="auto">The issue was caused by improper validation of HTTP Basic Authentication. The backend checked for the presence of the Authorization header but failed to properly validate the supplied credentials. As a result, requests containing Authorization: Basic without a valid username or password were incorrectly treated as authenticated.</p>
+<h3 dir="auto"><strong>Contact Me</strong></h3>
+<p dir="auto">x: <a href="https://x.com/00xalr" target="_blank" rel="noopener">https://x.com/00xalr</a> ,</p>
+<p dir="auto">instagram: <a href="https://www.instagram.com/0xalr" target="_blank" rel="noopener">https://www.instagram.com/0xalr</a> ,</p>
+<p dir="auto">Linkedin: <a href="https://www.linkedin.com/in/abdalkreem-dagga/" target="_blank" rel="noopener">https://www.linkedin.com/in/abdalkreem-dagga/</a></p>{% endraw %}

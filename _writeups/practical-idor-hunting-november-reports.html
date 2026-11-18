@@ -1,0 +1,52 @@
+---
+title: "Practical IDOR Hunting – Real Findings from My November Reports"
+date: 2025-12-07
+medium_url: https://medium.com/@0xalr/practical-idor-hunting-real-findings-from-my-november-reports-a6b46edcc1f3
+cover: /assets/img/covers/2025-12-idor-november.webp
+cover_alt: "Redacted JSON response describing a team integration, including a \"public\":false field."
+cover_fit: cover
+cover_pos: "top"
+summary: "A month spent on access control. It covers overriding a `public` flag to expose another team's private integrations, mining client-side JavaScript for hidden integration endpoints, and reading object data just by swapping slugs or IDs. Each finding comes with the reasoning behind it."
+tags: ["IDOR", "Access Control", "API"]
+---
+{% raw %}<h4 dir="auto"><strong><em>🔍 introducation</em></strong></h4><p dir="auto">During November, I dedicated most of my bug hunting efforts to access control vulnerabilities—specifically IDOR (Insecure Direct Object Reference). While IDOR is often considered a “common” issue, I quickly discovered that this vulnerability comes in many shapes and forms depending on how systems handle authorization, object visibility, and backend validation.</p>
+<p dir="auto">In this article, I will walk through the most interesting IDOR cases I found, how I identified them, and what made each one exploitable. My goal is not just to showcase reports, but to provide others (especially hunters) with real-world observations, practical angles of thinking, and patterns that may help uncover similar access control weaknesses.</p>
+<h3 dir="auto"><strong><em>Finding #1 — Unauthorized Access to Private Integrations by Overriding a Boolean Parameter</em>.</strong></h3>
+<h4 dir="auto"><em>The Functionality:</em></h4><p dir="auto">The platform allows teams to manage integrations (private integrations and marketplace ones). Normally, integrations that are private are only visible to team members with specific permissions.</p>
+<p dir="auto">In the user interface, private integrations are not displayed for general members or viewer-level users</p>
+<h4 dir="auto"><strong>Expected Behavior:</strong></h4><p dir="auto">A user without proper access should not be able to view the team’s private integrations, and no one outside the team should be able to see them either.</p>
+<h4 dir="auto"><strong>What Happened:</strong></h4><p dir="auto">While reviewing one of the integration-related endpoints (<strong>/api/v1/integration/{slug-integration}</strong>), the API response returned the following field:</p>
+<p dir="auto">public: false</p>
+<figure><img src="{% endraw %}{{ '/assets/img/writeups/practical-idor-hunting-november-reports/01.png' | relative_url }}{% raw %}" alt="" loading="lazy" decoding="async"><figcaption dir="auto">“public”:”false”</figcaption></figure>
+<p dir="auto">I tried changing the integration slug to one belonging to another team, but unfortunately, I got a 401 error. I also tried several other methods, but I was unsuccessful.</p>
+<p dir="auto">But I chose the idea of ​​entering `public` as a parameter in the request and setting its value to `true`.</p>
+<p dir="auto">As I suspected, the authentication was passed and the backend server considered it to be publicly available, so the integration information was returned.</p>
+<p dir="auto">report sent: 2</p>
+<figure><img src="{% endraw %}{{ '/assets/img/writeups/practical-idor-hunting-november-reports/02.png' | relative_url }}{% raw %}" alt="" loading="lazy" decoding="async"></figure>
+<h3 dir="auto"><strong>Finding #2 — Discovering Hidden API Endpoints Through Client-side JavaScript Files</strong></h3>
+<p dir="auto">During testing, I wanted to explore functions that do not appear in the user interface but might still exist logically within the application. Sometimes platforms remove features from the UI but keep the same backend endpoints active for compatibility or legacy functionality.</p>
+<p dir="auto">To identify these hidden functionalities, I inspected JavaScript source files loaded in the web application</p>
+<p dir="auto">My method for finding endpoints in JavaScript files is to search for the function within the file. For example, if the integration function has an endpoint in the following format: `/api/v2/integration`, I will take that endpoint and search for it in all JavaScript files.</p>
+<p dir="auto">It will output all the functions that fall under the endpoint, for example.</p>
+<pre>/api/v2/integration/install<br>/api/v2/integration/configruation<br></pre>
+<p dir="auto">After compiling all the endpoints that fall under /api/v2/integration, start guessing according to the application. For example:</p>
+<pre>/api/v2/integration/install/{id-org||id-workspase || id-install-integration}<br>/api/v2/integration/installs<br>/api/v2/integration/configration/{id-org ||id-workspase ||id-configruation}<br>/api/v2/integration/configrations<br>/api/v2/integration/configrations/{id}<br>etc.......</pre>
+<p dir="auto">The guessing comes from the application and the functions that are within the integration feature.</p>
+<p dir="auto">It requires patience and perseverance, but it’s worth it.</p>
+<p dir="auto">Through this method, 3 vulnerabilities were discovered.</p>
+<figure><img src="{% endraw %}{{ '/assets/img/writeups/practical-idor-hunting-november-reports/03.jpeg' | relative_url }}{% raw %}" alt="" loading="lazy" decoding="async"></figure>
+<h3 dir="auto"><strong><em>Finding #3—Direct Data Exposure by Changing Slug/ID in API Requests</em></strong></h3>
+<p dir="auto">During normal usage, the application relies on identifiers (such as slugs or UUIDs) to fetch specific objects like:</p>
+<p dir="auto">Teams</p>
+<p dir="auto">Applications</p>
+<p dir="auto">Workspaces</p>
+<p dir="auto">Integrations</p>
+<p dir="auto">Projects</p>
+<p dir="auto">etc…</p>
+<p dir="auto">You can easily change the title or ID of any object, and it will return the object’s information without any authentication.</p>
+<p dir="auto">report: 2</p>
+<figure><img src="{% endraw %}{{ '/assets/img/writeups/practical-idor-hunting-november-reports/04.jpeg' | relative_url }}{% raw %}" alt="" loading="lazy" decoding="async"></figure>
+<p dir="auto"><strong>Contact me:</strong></p>
+<p dir="auto">x: <a href="https://x.com/00xalr" target="_blank" rel="noopener">https://x.com/00xalr</a> ,</p>
+<p dir="auto">instagram: <a href="https://www.instagram.com/0xalr" target="_blank" rel="noopener">https://www.instagram.com/0xalr</a> ,</p>
+<p dir="auto">linkedin: <a href="https://www.linkedin.com/in/abdalkreem-dagga" target="_blank" rel="noopener">https://www.linkedin.com/in/abdalkreem-dagga</a> ,</p>{% endraw %}

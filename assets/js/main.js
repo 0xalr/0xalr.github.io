@@ -212,8 +212,10 @@
           form.reset();
           fields.forEach(function (f) { f.el.removeAttribute("aria-invalid"); });
           setStatus("Thanks — your message is on its way. I'll reply by email.", "ok");
+        } else if (/activat/i.test(res.body.message || "")) {
+          setStatus("The contact form is still being set up, so your message wasn't delivered. Please try again later.", "err");
         } else {
-          setStatus("Sorry, the message couldn't be sent. Please try again in a moment.", "err");
+          setStatus("Sorry, the message couldn't be sent" + (res.body.message ? " (" + res.body.message + ")" : "") + ". Please try again in a moment.", "err");
         }
       }).catch(function () {
         setStatus("Network error — please check your connection and try again.", "err");

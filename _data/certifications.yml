@@ -1,19 +1,30 @@
 # ─────────────────────────────────────────────────────────────────────────────
-#  CERTIFICATIONS — shown on /certifications/.
+#  CERTIFICATIONS — shown on /certifications/, in the order written here.
 #
-#  The list is empty until you add your certifications. Copy the example
-#  below, remove the leading "# " from each line, and fill it in.
-#  Entries appear in the order written here.
-#
-#  name        Certification name.
+#  name        Full certification name.
+#  short       Abbreviation shown as a label (optional).
 #  issuer      Issuing organization.
-#  date        When it was earned (any text, e.g. "2025" or "Mar 2025").
-#  url         Optional link to a verification / credential page.
-#  credential  Optional credential ID.
+#  date        Date awarded, YYYY-MM-DD.
+#  expires     Expiry date, YYYY-MM-DD (optional).
+#  image       Certificate image in /assets/img/certs/.
+#  url         Verification page — the image and "Verify" link open it.
+#  credential  Credential / certification ID (optional).
 # ─────────────────────────────────────────────────────────────────────────────
 
-# - name: Example Certification
-#   issuer: Example Issuer
-#   date: "2025"
-#   url: https://example.com/verify/123
-#   credential: ABC-123
+- name: Web Application Penetration Tester eXtreme
+  short: eWPTX
+  issuer: INE Security
+  date: 2026-05-13
+  expires: 2029-05-13
+  image: /assets/img/certs/ewptx.webp
+  url: https://certs.ine.com/9809d81a-0d2c-4536-8f6d-391e302cf3bd#acc.zDfQcXie
+  credential: "182302743"
+
+- name: Web Application Penetration Tester
+  short: eWPT
+  issuer: INE Security
+  date: 2026-04-16
+  expires: 2029-04-16
+  image: /assets/img/certs/ewpt.webp
+  url: https://certs.ine.com/31f0ce25-4f30-4507-a2f7-76164e67c8a1#acc.0UFzvnZw
+  credential: "179992376"

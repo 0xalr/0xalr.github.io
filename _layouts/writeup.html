@@ -1,0 +1,52 @@
+---
+layout: default
+slug: writeup
+---
+{%- assign all = site.writeups | sort: "date" | reverse -%}
+{%- assign words = content | strip_html | number_of_words -%}
+{%- assign minutes = words | divided_by: 200 | plus: 1 -%}
+<article class="writeup" itemscope itemtype="https://schema.org/BlogPosting">
+  <header class="wrap writeup-head">
+    <a class="back-link reveal" href="{{ '/writeups/' | relative_url }}"><span aria-hidden="true">←</span> All writeups</a>
+    <div class="card-meta writeup-meta reveal">
+      <time datetime="{{ page.date | date: '%Y-%m-%d' }}" itemprop="datePublished">{{ page.date | date: "%B %-d, %Y" }}</time>
+      <span aria-hidden="true">·</span>
+      <span>{{ minutes }} min read</span>
+      {%- if page.tags -%}
+      <ul class="tags" aria-label="Topics">
+        {%- for t in page.tags -%}<li>{{ t }}</li>{%- endfor -%}
+      </ul>
+      {%- endif -%}
+    </div>
+    <h1 class="writeup-title reveal" itemprop="headline">{{ page.title }}</h1>
+    <p class="writeup-byline reveal">By <span itemprop="author">{{ site.author }}</span> <span class="muted">(ALR)</span></p>
+  </header>
+
+  <div class="wrap">
+    <div class="panel writeup-body prose-article" itemprop="articleBody">
+      {{ content }}
+    </div>
+
+    {%- if page.medium_url -%}
+    <p class="writeup-origin">Also published on <a href="{{ page.medium_url }}" target="_blank" rel="noopener">Medium<span class="sr-only"> (opens in a new tab)</span> ↗</a></p>
+    {%- endif -%}
+
+    {%- for d in all -%}
+      {%- if d.url == page.url -%}
+        {%- assign i = forloop.index0 -%}
+      {%- endif -%}
+    {%- endfor -%}
+    {%- assign newer_i = i | minus: 1 -%}
+    {%- assign older_i = i | plus: 1 -%}
+    <nav class="writeup-nav" aria-label="More writeups">
+      {%- if older_i < all.size -%}
+        {%- assign o = all[older_i] -%}
+        <a class="panel writeup-nav-link" href="{{ o.url | relative_url }}" rel="prev"><span class="kicker">← Older</span><span>{{ o.title }}</span></a>
+      {%- else -%}<span></span>{%- endif -%}
+      {%- if newer_i >= 0 -%}
+        {%- assign n = all[newer_i] -%}
+        <a class="panel writeup-nav-link writeup-nav-link--next" href="{{ n.url | relative_url }}" rel="next"><span class="kicker">Newer →</span><span>{{ n.title }}</span></a>
+      {%- endif -%}
+    </nav>
+  </div>
+</article>

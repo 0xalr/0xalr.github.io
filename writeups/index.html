@@ -4,7 +4,7 @@ title: Writeups
 slug: writeups
 description: Bug bounty write-ups by Abdalkreem (ALR) covering IDOR, authentication bypass, account takeover and XXE, each linked to the original Medium article.
 ---
-{%- assign articles = site.data.articles | sort: "date" | reverse -%}
+{%- assign articles = site.writeups | sort: "date" | reverse -%}
 {%- assign all_tags = "" | split: "" -%}
 {%- for a in articles -%}{%- assign all_tags = all_tags | concat: a.tags -%}{%- endfor -%}
 {%- assign all_tags = all_tags | uniq | sort_natural -%}
@@ -12,7 +12,7 @@ description: Bug bounty write-ups by Abdalkreem (ALR) covering IDOR, authenticat
   <div class="wrap">
     <p class="kicker reveal">Writeups</p>
     <h1 class="page-title reveal">Writeups</h1>
-    <p class="lede reveal">Real findings from bug bounty work, showing how each bug was found, why it worked, and what it exposed. Every article opens on Medium.</p>
+    <p class="lede reveal">Real findings from bug bounty work, showing how each bug was found, why it worked, and what it exposed. Each one is published in full here.</p>
   </div>
 </section>
 

@@ -31,6 +31,19 @@ contact:
 
 og_image: /assets/img/og-image.png
 
+# Full writeups live in _writeups/ — one file per article, published at /writeups/<file-name>/.
+collections:
+  writeups:
+    output: true
+    permalink: /writeups/:name/
+
+defaults:
+  - scope:
+      path: ""
+      type: writeups
+    values:
+      layout: writeup
+
 plugins:
   - jekyll-sitemap
 
