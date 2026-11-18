@@ -2,7 +2,6 @@
 layout: default
 slug: home
 ---
-{%- assign articles = site.writeups | sort: "date" | reverse -%}
 <section class="hero" aria-labelledby="hero-title">
   {% include orbits.html %}
   <div class="wrap hero-inner">
@@ -15,27 +14,10 @@ slug: home
       <a class="btn btn--ghost" href="{{ '/contact/' | relative_url }}">Get in touch</a>
     </div>
   </div>
-  <a class="scroll-cue" href="#writeups" aria-label="Skip to latest writeups"><span aria-hidden="true"></span></a>
+  <a class="scroll-cue" href="#contact-cta" aria-label="Skip to contact"><span aria-hidden="true"></span></a>
 </section>
 
-<section class="section" id="writeups" aria-labelledby="writeups-h">
-  <div class="wrap">
-    <div class="section-head reveal">
-      <div>
-        <p class="kicker">Writeups</p>
-        <h2 id="writeups-h" class="section-title">Latest from Medium</h2>
-      </div>
-      <a class="link-more" href="{{ '/writeups/' | relative_url }}">All writeups <span aria-hidden="true">→</span></a>
-    </div>
-    <div class="card-grid">
-      {%- for a in articles limit: 5 -%}
-        {% include article-card.html article=a featured=forloop.first %}
-      {%- endfor -%}
-    </div>
-  </div>
-</section>
-
-<section class="section section--cta" aria-labelledby="cta-h">
+<section class="section section--cta" id="contact-cta" aria-labelledby="cta-h">
   <div class="wrap">
     <div class="panel cta reveal">
       <div>
