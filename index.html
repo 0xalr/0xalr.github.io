@@ -1,0 +1,68 @@
+---
+layout: default
+slug: home
+---
+{%- assign articles = site.data.articles | sort: "date" | reverse -%}
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div class="hero-copy">
+      <p class="eyebrow reveal"><span class="dot" aria-hidden="true"></span>Security research · Bug bounty</p>
+      <h1 class="hero-title reveal">Hi, I'm Abdalkreem.<br><span class="accent-text">I hunt bugs and write about them.</span></h1>
+      <p class="lede reveal">I'm a security researcher and bug bounty hunter. As <strong>ALR</strong>, I publish detailed write-ups of real findings: broken access control, authentication bypasses, XXE escalated to internal services, and the API and JavaScript recon that turns them up.</p>
+      <div class="hero-actions reveal">
+        <a class="btn btn--primary" href="#writeups">Read the write-ups</a>
+        <a class="btn btn--ghost" href="{{ site.social.medium }}" target="_blank" rel="noopener">Follow on Medium <span aria-hidden="true">↗</span></a>
+      </div>
+    </div>
+
+    <div class="terminal reveal" aria-label="Latest write-ups">
+      <div class="terminal-bar" aria-hidden="true"><span></span><span></span><span></span><em>~/alr/writeups</em></div>
+      <div class="terminal-body">
+        <p class="cmd"><span class="prompt" aria-hidden="true">$</span> ls -t writeups/</p>
+        <ol>
+          {%- for a in articles limit: 5 -%}
+          <li><a href="{{ a.url }}" target="_blank" rel="noopener"><time datetime="{{ a.date | date: '%Y-%m-%d' }}">{{ a.date | date: "%Y-%m-%d" }}</time><span>{{ a.tags | first | downcase | replace: " ", "-" }}</span></a></li>
+          {%- endfor -%}
+        </ol>
+        <p class="cmd"><span class="prompt" aria-hidden="true">$</span> <span class="caret" aria-hidden="true"></span></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section focus" aria-labelledby="focus-h">
+  <div class="wrap">
+    <h2 id="focus-h" class="section-label reveal">Areas I write about</h2>
+    <ul class="focus-grid">
+      <li class="reveal"><span class="focus-num">01</span><h3>Access control &amp; IDOR</h3><p>Swapping IDs, slugs and flags to reach other users' and teams' data.</p></li>
+      <li class="reveal"><span class="focus-num">02</span><h3>Authentication</h3><p>Login and header logic that trusts the wrong signal, plus account takeover flows.</p></li>
+      <li class="reveal"><span class="focus-num">03</span><h3>XXE &amp; SSRF</h3><p>Escalating parser bugs into reads of internal services, cloud metadata and data stores.</p></li>
+      <li class="reveal"><span class="focus-num">04</span><h3>API &amp; JS recon</h3><p>Pulling hidden endpoints out of client-side code and guessing what the UI hides.</p></li>
+    </ul>
+  </div>
+</section>
+
+<section class="section writeups" id="writeups" aria-labelledby="writeups-h">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div>
+        <p class="section-label">Write-ups</p>
+        <h2 id="writeups-h" class="section-title">Latest from Medium</h2>
+      </div>
+      <a class="link-more" href="{{ '/blog/' | relative_url }}">All write-ups <span aria-hidden="true">→</span></a>
+    </div>
+    <div class="card-grid">
+      {%- for a in articles limit: 5 -%}
+        {% include article-card.html article=a featured=forloop.first %}
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+<section class="section about-teaser" aria-labelledby="about-teaser-h">
+  <div class="wrap teaser-inner reveal">
+    <h2 id="about-teaser-h" class="section-title">Behind ALR</h2>
+    <p>ALR is the name I publish my research under. Each write-up walks through how a finding was discovered, step by step, so other hunters can pick up the approach.</p>
+    <a class="btn btn--ghost" href="{{ '/about/' | relative_url }}">More about me</a>
+  </div>
+</section>

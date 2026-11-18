@@ -1,0 +1,10 @@
+<footer class="site-footer">
+  <div class="wrap footer-inner">
+    <div class="footer-brand">
+      <span class="brand-mark">ALR</span>
+      <p>{{ site.author }} · {{ site.tagline }}</p>
+    </div>
+    {% include social-links.html class="footer-links" %}
+    <p class="footer-meta">© {{ site.time | date: "%Y" }} {{ site.author }}. Write-ups are published on <a href="{{ site.social.medium }}">Medium</a>.</p>
+  </div>
+</footer>

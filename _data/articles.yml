@@ -1,0 +1,85 @@
+# ─────────────────────────────────────────────────────────────────────────────
+#  ARTICLES — the single source of truth for every write-up on the site.
+#
+#  To add an article, copy one block below, paste it anywhere in this list,
+#  and fill in the fields. Order does not matter: the site sorts by `date`
+#  (newest first). The newest article is automatically featured on the homepage.
+#
+#  title       Exact title as published on Medium.
+#  url         Canonical Medium URL (drop the ?source=... tracking suffix).
+#  date        Publication date, YYYY-MM-DD.
+#  cover       Path to an image in /assets/img/covers/ (or a full https:// URL).
+#  cover_alt   Short description of the cover image for screen readers.
+#  cover_fit   "cover" (fill & crop, default) or "contain" (show whole image —
+#              use for very wide or very tall screenshots).
+#  cover_pos   Optional CSS object-position, e.g. "top" or "center 30%".
+#  summary     One to three sentences. Plain text; `backticks` render as code.
+#  tags        A few short topic labels. Used for the filter on the Blog page.
+# ─────────────────────────────────────────────────────────────────────────────
+
+- title: 'From $1,000 to $10,000: How I Turned a "Limited" XXE Into a Critical Redis Session Store Exposure'
+  url: https://medium.com/@0xalr/from-1-000-to-10-000-how-i-turned-a-limited-xxe-into-a-critical-redis-session-store-exposure-3292bd82a0d7
+  date: 2026-11-13
+  cover: /assets/img/covers/2026-11-xxe-redis.webp
+  cover_alt: Terminal output of an XML-RPC fault response leaking the first lines of /etc/passwd, with the rest blurred.
+  cover_fit: cover
+  cover_pos: top
+  summary: >-
+    An XML-RPC endpoint found while decompiling a target's client binaries turned out to
+    resolve external entities. Starting from an `/etc/passwd` read that was rated as limited
+    impact, the write-up walks through reaching internal services and AWS container metadata,
+    then using `gopher://` to talk to an unauthenticated internal Redis instance, which took the
+    bounty from $1,000 to $10,000 in ten days.
+  tags: [XXE, SSRF, Redis]
+
+- title: "No Username. No Password. Just a Header — A $3,000 Authentication Bypass"
+  url: https://medium.com/@0xalr/no-username-no-password-just-a-header-a-3-000-authentication-bypass-9b42432b6c69
+  date: 2026-06-03
+  cover: /assets/img/covers/2026-06-auth-header-bypass.webp
+  cover_alt: Burp Suite request and 401 Unauthorized response for a redacted API endpoint.
+  cover_fit: contain
+  summary: >-
+    Every API endpoint pulled from a JavaScript file returned 401, until tracing the client's
+    HTTP Basic auth logic suggested the backend might only check that the header exists.
+    Sending an empty `Authorization: Basic` header bypassed authentication across nearly 50
+    endpoints. The result was a Critical report and a $3,000 bounty.
+  tags: [Authentication, JS Analysis, API]
+
+- title: "Practical IDOR Hunting – Real Findings from My November Reports"
+  url: https://medium.com/@0xalr/practical-idor-hunting-real-findings-from-my-november-reports-a6b46edcc1f3
+  date: 2025-12-07
+  cover: /assets/img/covers/2025-12-idor-november.webp
+  cover_alt: Redacted JSON response describing a team integration, including a "public":false field.
+  cover_fit: cover
+  cover_pos: top
+  summary: >-
+    A month spent on access control. It covers overriding a `public` flag to expose another
+    team's private integrations, mining client-side JavaScript for hidden integration
+    endpoints, and reading object data just by swapping slugs or IDs. Each finding comes with
+    the reasoning behind it.
+  tags: [IDOR, Access Control, API]
+
+- title: "Sensitive Information Disclosure & IDOR via Insecure User Profile API"
+  url: https://medium.com/@0xalr/sensitive-information-disclosure-idor-via-insecure-user-profile-api-c9a02ea79785
+  date: 2025-09-09
+  cover: /assets/img/covers/2025-09-profile-api-idor.webp
+  cover_alt: Report summary panel showing a Critical-severity IDOR finding with redacted details.
+  cover_fit: contain
+  summary: >-
+    Trying variations of a hidden user-profile API led to an endpoint that returned any
+    user's information by GUID. The missing piece, getting a victim's GUID, came from the
+    registration flow: signing up with an existing email returned that user's GUID.
+  tags: [IDOR, Information Disclosure, API]
+
+- title: "Account Takeover via Insecure Email Change — Critical Vulnerability"
+  url: https://medium.com/@0xalr/account-takeover-via-insecure-email-change-critical-vulnerability-b67d44d7f600
+  date: 2025-09-05
+  cover: /assets/img/covers/2025-09-email-change-ato.webp
+  cover_alt: Burp Suite request to /Api/v2.0/User/Rename with victim and attacker email parameters, answered with 204 No Content.
+  cover_fit: cover
+  cover_pos: left top
+  summary: >-
+    While trying user-management actions on a REST API, a `/User/Rename` endpoint turned out
+    to change any account's email through the `emailId` and `renameEmailId` parameters, with no
+    authorization or ownership check. That allowed full account takeover.
+  tags: [Account Takeover, Access Control, API]

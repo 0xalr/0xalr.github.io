@@ -1,0 +1,39 @@
+---
+layout: default
+title: About
+slug: about
+description: About Abdalkreem (ALR), a security researcher and bug bounty hunter who writes about access control, authentication and XXE vulnerabilities.
+---
+{%- assign articles = site.data.articles | sort: "date" | reverse -%}
+<section class="page-hero">
+  <div class="wrap">
+    <p class="eyebrow reveal"><span class="dot" aria-hidden="true"></span>About</p>
+    <h1 class="page-title reveal">Abdalkreem <span class="muted">/ ALR</span></h1>
+  </div>
+</section>
+
+<section class="section section--tight">
+  <div class="wrap about-grid">
+    <div class="prose reveal">
+      <p class="lede">I'm a security researcher and bug bounty hunter. I publish as <strong>ALR</strong> (<span class="mono">@0xalr</span> on Medium).</p>
+      <p>My write-ups document real vulnerabilities from bug bounty programs, with step-by-step accounts of how each one was found. They tend to start with reconnaissance: reading client-side JavaScript, decompiling client binaries, and enumerating API endpoints the UI never shows. From there they follow up on the small inconsistencies that recon turns up.</p>
+      <p>Topics so far include insecure direct object references and broken access control, an authentication bypass through a bare <code>Authorization</code> header, account takeover through an unprotected email-change endpoint, and an XXE that I escalated to an unauthenticated internal Redis instance.</p>
+      <p>I write these so other hunters can reuse the thinking behind them, not only read about the result.</p>
+    </div>
+
+    <aside class="about-side reveal" aria-label="Profiles and writing">
+      <div class="side-block">
+        <h2 class="side-title">Find me</h2>
+        {% include social-links.html class="stacked-links" %}
+      </div>
+      <div class="side-block">
+        <h2 class="side-title">Recent writing</h2>
+        <ol class="mini-list">
+          {%- for a in articles limit: 5 -%}
+          <li><a href="{{ a.url }}" target="_blank" rel="noopener">{{ a.title }}</a><time datetime="{{ a.date | date: '%Y-%m-%d' }}">{{ a.date | date: "%b %Y" }}</time></li>
+          {%- endfor -%}
+        </ol>
+      </div>
+    </aside>
+  </div>
+</section>

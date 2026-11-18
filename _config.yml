@@ -1,0 +1,37 @@
+# Site settings — edit these to change the identity shown across the site.
+title: ALR
+author: Abdalkreem
+tagline: Security researcher & bug bounty hunter
+description: >-
+  ALR is the security research and writing of Abdalkreem — a security researcher
+  and bug bounty hunter publishing hands-on write-ups on access control, authentication,
+  XXE and API security.
+url: "https://abdalkreem-alt.github.io"
+baseurl: ""
+lang: en
+locale: en_US
+
+# Profiles that appear in the footer, About page and structured data.
+# Every link here is published by the author on their Medium articles or GitHub.
+social:
+  medium: https://medium.com/@0xalr
+  github: https://github.com/Abdalkreem-alt
+  x: https://x.com/00xalr
+  x_handle: "00xalr"
+  linkedin: https://www.linkedin.com/in/abdalkreem-dagga/
+  instagram: https://www.instagram.com/0xalr
+
+og_image: /assets/img/og-image.png
+
+plugins:
+  - jekyll-sitemap
+
+markdown: kramdown
+permalink: pretty
+
+exclude:
+  - README.md
+  - Gemfile
+  - Gemfile.lock
+  - tools/
+  - vendor/
