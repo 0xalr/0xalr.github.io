@@ -1,0 +1,43 @@
+---
+layout: default
+title: Certifications
+slug: certifications
+description: Security certifications held by Abdalkreem (ALR), cybersecurity researcher and bug hunter.
+---
+{%- assign certs = site.data.certifications -%}
+<section class="page-hero">
+  <div class="wrap">
+    <p class="kicker reveal">Certifications</p>
+    <h1 class="page-title reveal">Certifications</h1>
+  </div>
+</section>
+
+<section class="section section--tight">
+  <div class="wrap">
+    {%- if certs and certs.size > 0 -%}
+    <ul class="cert-grid">
+      {%- for c in certs -%}
+      <li class="panel cert reveal">
+        <span class="cert-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="22" height="22"><path d="M12 2.8 19.5 6v5.6c0 4.4-3.1 8.4-7.5 9.6-4.4-1.2-7.5-5.2-7.5-9.6V6Z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="m8.6 12 2.4 2.4 4.4-4.6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </span>
+        <div>
+          <h2 class="cert-name">{{ c.name }}</h2>
+          <p class="cert-meta">{{ c.issuer }}{% if c.date %} · {{ c.date }}{% endif %}</p>
+          {%- if c.credential -%}<p class="cert-meta mono">ID {{ c.credential }}</p>{%- endif -%}
+          {%- if c.url -%}<a class="card-cta" href="{{ c.url }}" target="_blank" rel="noopener">Verify<span class="sr-only"> {{ c.name }} (opens in a new tab)</span> <span class="arrow" aria-hidden="true">↗</span></a>{%- endif -%}
+        </div>
+      </li>
+      {%- endfor -%}
+    </ul>
+    {%- else -%}
+    <div class="panel empty reveal">
+      <span class="cert-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="22" height="22"><path d="M12 2.8 19.5 6v5.6c0 4.4-3.1 8.4-7.5 9.6-4.4-1.2-7.5-5.2-7.5-9.6V6Z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="m8.6 12 2.4 2.4 4.4-4.6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </span>
+      <p>Certifications will be listed here soon.</p>
+      <a class="btn btn--ghost" href="{{ '/contact/' | relative_url }}">Get in touch</a>
+    </div>
+    {%- endif -%}
+  </div>
+</section>

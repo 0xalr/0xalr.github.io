@@ -1,0 +1,19 @@
+# ─────────────────────────────────────────────────────────────────────────────
+#  CERTIFICATIONS — shown on /certifications/.
+#
+#  The list is empty until you add your certifications. Copy the example
+#  below, remove the leading "# " from each line, and fill it in.
+#  Entries appear in the order written here.
+#
+#  name        Certification name.
+#  issuer      Issuing organization.
+#  date        When it was earned (any text, e.g. "2025" or "Mar 2025").
+#  url         Optional link to a verification / credential page.
+#  credential  Optional credential ID.
+# ─────────────────────────────────────────────────────────────────────────────
+
+# - name: Example Certification
+#   issuer: Example Issuer
+#   date: "2025"
+#   url: https://example.com/verify/123
+#   credential: ABC-123

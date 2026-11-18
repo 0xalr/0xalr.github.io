@@ -14,8 +14,8 @@
 <meta name="author" content="{{ site.author }}">
 <link rel="canonical" href="{{ canonical }}">
 <meta name="color-scheme" content="dark light">
-<meta name="theme-color" content="#0c0d10" media="(prefers-color-scheme: dark)">
-<meta name="theme-color" content="#f5f2ea" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0b0c0a" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#f2f1ea" media="(prefers-color-scheme: light)">
 
 <meta property="og:type" content="{% if page.url == '/' %}website{% else %}profile{% endif %}">
 <meta property="og:site_name" content="{{ site.title }}">
@@ -39,7 +39,7 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
 <link rel="stylesheet" href="{{ '/assets/css/main.css' | relative_url }}?v={{ site.time | date: '%s' }}">
 
 <script>
@@ -59,9 +59,10 @@
   "@type": "Person",
   "name": "{{ site.author }}",
   "alternateName": ["ALR", "0xalr"],
-  "jobTitle": "Security Researcher & Bug Bounty Hunter",
+  "jobTitle": "Cybersecurity Researcher & Bug Hunter",
   "url": "{{ site.url }}",
   "sameAs": [
+    "{{ site.social.hackerone }}",
     "{{ site.social.medium }}",
     "{{ site.social.github }}",
     "{{ site.social.x }}",

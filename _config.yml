@@ -1,11 +1,10 @@
 # Site settings — edit these to change the identity shown across the site.
 title: ALR
 author: Abdalkreem
-tagline: Security researcher & bug bounty hunter
+tagline: Cybersecurity Researcher & Bug Hunter
 description: >-
-  ALR is the security research and writing of Abdalkreem — a security researcher
-  and bug bounty hunter publishing hands-on write-ups on access control, authentication,
-  XXE and API security.
+  ALR — Abdalkreem, cybersecurity researcher and bug hunter. Write-ups on web application
+  security, authentication bypasses, access control (IDOR/BAC) and API security.
 url: "https://0xalr.github.io"
 baseurl: ""
 lang: en
@@ -20,6 +19,15 @@ social:
   x_handle: "00xalr"
   linkedin: https://www.linkedin.com/in/abdalkreem-dagga/
   instagram: https://www.instagram.com/0xalr
+  hackerone: https://hackerone.com/x0xalr
+
+# Contact form (delivered by FormSubmit — https://formsubmit.co).
+# After you click "Activate" in FormSubmit's first email, you can replace the
+# address below with the random alias string FormSubmit gives you, so your email
+# address no longer appears in the page source.
+contact:
+  formsubmit_id: 3bddagg3@gmail.com
+  subject: New message from 0xalr.github.io
 
 og_image: /assets/img/og-image.png
 
