@@ -6,7 +6,7 @@ description: >-
   ALR is the security research and writing of Abdalkreem — a security researcher
   and bug bounty hunter publishing hands-on write-ups on access control, authentication,
   XXE and API security.
-url: "https://abdalkreem-alt.github.io"
+url: "https://0xalr.github.io"
 baseurl: ""
 lang: en
 locale: en_US

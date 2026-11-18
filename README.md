@@ -1,7 +1,7 @@
-# ALR — abdalkreem-alt.github.io
+# ALR — 0xalr.github.io
 
 Personal site and write-up portfolio of Abdalkreem (ALR), a security researcher and bug bounty hunter.
-Live at **https://abdalkreem-alt.github.io**.
+Live at **https://0xalr.github.io**.
 
 It is a plain Jekyll site that GitHub Pages builds automatically on every push to `main`.
 No local tooling is required.
