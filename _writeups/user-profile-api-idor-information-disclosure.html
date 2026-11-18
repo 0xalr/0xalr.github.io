@@ -8,7 +8,7 @@ cover_fit: contain
 summary: "Trying variations of a hidden user-profile API led to an endpoint that returned any user's information by GUID. The missing piece, getting a victim's GUID, came from the registration flow: signing up with an existing email returned that user's GUID."
 tags: ["IDOR", "Information Disclosure", "API"]
 ---
-{% raw %}<figure><img src="{% endraw %}{{ '/assets/img/writeups/user-profile-api-idor-information-disclosure/01.png' | relative_url }}{% raw %}" alt="" loading="lazy" decoding="async"></figure>
+{% raw %}<figure><img src="{% endraw %}{{ '/assets/img/writeups/user-profile-api-idor-information-disclosure/01.webp' | relative_url }}{% raw %}" width="246" height="467" alt="" loading="lazy" decoding="async"></figure>
 <h3 dir="auto"><strong>What is idor?</strong></h3>
 <p dir="auto">An IDOR (Insecure Direct Object Reference) vulnerability occurs when an application allows a user to access or modify data/resources within the system simply by changing the ID in the request, without performing permission verification.</p>
 <p dir="auto">This means that the attacker changes a number or value in the URL or Request Parameter (such as: user_id=123 to user_id=124) → and thus accesses information or resources that are not related to his account.</p>
@@ -24,12 +24,12 @@ tags: ["IDOR", "Information Disclosure", "API"]
 <p dir="auto">I deleted the profile and entered the previous attempts like:</p>
 <pre>/xxxxxxxapi/v2/User/remove<br>/xxxxxxxapi/v2/User/add<br>/xxxxxxxapi/v2/User/update<br>/xxxxxxxapi/v2/User/{id-victim}<br>etc...</pre>
 <p dir="auto">Indeed, when I tried the following endpoint /xxxxxxxapi/v2/User/{id-victim}, it returns the user information, but unfortunately the user ID on the site is gguid<em>.</em></p>
-<figure><img src="{% endraw %}{{ '/assets/img/writeups/user-profile-api-idor-information-disclosure/02.png' | relative_url }}{% raw %}" alt="" loading="lazy" decoding="async"></figure>
+<figure><img src="{% endraw %}{{ '/assets/img/writeups/user-profile-api-idor-information-disclosure/02.webp' | relative_url }}{% raw %}" width="1400" height="447" alt="" loading="lazy" decoding="async"></figure>
 <p dir="auto">I tried to search for endpoints that return the user ID based on gguid but I didn’t get anything.</p>
 <p dir="auto"><strong>But……….</strong></p>
 <p dir="auto">It occurred to me to try registering an account using the victim’s email.</p>
 <p dir="auto">As I expected, the victim’s `guid` returned to me in response with a message alerting me to the user’s presence on the system.</p>
-<figure><img src="{% endraw %}{{ '/assets/img/writeups/user-profile-api-idor-information-disclosure/03.png' | relative_url }}{% raw %}" alt="" loading="lazy" decoding="async"></figure>
+<figure><img src="{% endraw %}{{ '/assets/img/writeups/user-profile-api-idor-information-disclosure/03.webp' | relative_url }}{% raw %}" width="887" height="361" alt="" loading="lazy" decoding="async"></figure>
 <h3 dir="auto">Impact</h3>
 <p dir="auto">Disclosure of all user information, including meta data.</p>
 <h4 dir="auto"><strong>Contact me:</strong></h4><p dir="auto">x: <a href="https://x.com/00xalr" target="_blank" rel="noopener">https://x.com/00xalr</a></p>

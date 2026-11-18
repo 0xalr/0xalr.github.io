@@ -4,6 +4,7 @@ slug: home
 ---
 {%- assign articles = site.writeups | sort: "date" | reverse -%}
 <section class="hero" aria-labelledby="hero-title">
+  {% include orbits.html %}
   <div class="wrap hero-inner">
     <p class="pill reveal"><span class="pill-dot" aria-hidden="true"></span>Security research · Bug bounty</p>
     <h1 id="hero-title" class="hero-word reveal"><span class="sr-only">ALR — {{ site.author }}, {{ site.tagline }}</span><span aria-hidden="true">ALR</span></h1>

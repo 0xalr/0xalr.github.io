@@ -13,7 +13,8 @@ For every article in the feed it:
     not depend on Medium's CDN;
   * sanitises the HTML down to a small whitelist of tags/attributes.
 
-Standard library only. Medium's RSS feed only contains the 10 most recent posts.
+Standard library only; if Pillow is installed, images are also converted to WebP (max 1600px
+wide) for faster pages. Medium's RSS feed only contains the 10 most recent posts.
 """
 import argparse
 import html
@@ -24,6 +25,11 @@ import sys
 import urllib.request
 import xml.etree.ElementTree as ET
 from html.parser import HTMLParser
+
+try:
+    from PIL import Image  # optional
+except ImportError:
+    Image = None
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 COLL = os.path.join(ROOT, "_writeups")
@@ -149,6 +155,38 @@ def make_slug(url):
     return "-".join(words) or "writeup"
 
 
+def image_size(path):
+    """(width, height) for PNG/JPEG/WebP/GIF using only the standard library."""
+    with open(path, "rb") as f:
+        head = f.read(32)
+        if head[:8] == b"\x89PNG\r\n\x1a\n":
+            return int.from_bytes(head[16:20], "big"), int.from_bytes(head[20:24], "big")
+        if head[:6] in (b"GIF87a", b"GIF89a"):
+            return int.from_bytes(head[6:8], "little"), int.from_bytes(head[8:10], "little")
+        if head[:4] == b"RIFF" and head[8:12] == b"WEBP":
+            kind = head[12:16]
+            if kind == b"VP8X":
+                return 1 + int.from_bytes(head[24:27], "little"), 1 + int.from_bytes(head[27:30], "little")
+            if kind == b"VP8 ":
+                f.seek(26); d = f.read(4)
+                return int.from_bytes(d[0:2], "little") & 0x3FFF, int.from_bytes(d[2:4], "little") & 0x3FFF
+            if kind == b"VP8L":
+                f.seek(21); d = f.read(4); v = int.from_bytes(d, "little")
+                return (v & 0x3FFF) + 1, ((v >> 14) & 0x3FFF) + 1
+        if head[:2] == b"\xff\xd8":
+            f.seek(2)
+            while True:
+                m = f.read(4)
+                if len(m) < 4 or m[0] != 0xFF:
+                    break
+                seg_len = int.from_bytes(m[2:4], "big")
+                if 0xC0 <= m[1] <= 0xCF and m[1] not in (0xC4, 0xC8, 0xCC):
+                    d = f.read(5)
+                    return int.from_bytes(d[3:5], "big"), int.from_bytes(d[1:3], "big")
+                f.seek(seg_len - 2, 1)
+    return None
+
+
 def download_images(slug, images, sanitiser, dry):
     folder = os.path.join(IMG_ROOT, slug)
     os.makedirs(folder, exist_ok=True)
@@ -158,17 +196,29 @@ def download_images(slug, images, sanitiser, dry):
         ext = os.path.splitext(src.split("?")[0])[1].lower() or ".png"
         if ext not in (".png", ".jpg", ".jpeg", ".gif", ".webp"):
             ext = ".png"
-        name = f"{n:02d}{ext}"
-        dest = os.path.join(folder, name)
+        webp = os.path.join(folder, f"{n:02d}.webp")
+        dest = webp if (Image or os.path.exists(webp)) else os.path.join(folder, f"{n:02d}{ext}")
         if not dry and not os.path.exists(dest):
             try:
                 data = fetch(hq)
             except Exception:
                 data = fetch(src)
-            open(dest, "wb").write(data)
+            if dest == webp:
+                tmp = webp + ext
+                open(tmp, "wb").write(data)
+                im = Image.open(tmp)
+                im = im.convert("RGBA" if im.mode in ("RGBA", "LA", "P") else "RGB")
+                im.thumbnail((1600, 1600))
+                im.save(webp, "WEBP", quality=84, method=6)
+                os.remove(tmp)
+            else:
+                open(dest, "wb").write(data)
+        name = os.path.basename(dest)
         local = f"/assets/img/writeups/{slug}/{name}"
+        size = image_size(dest) if os.path.exists(dest) else None
+        dims = f' width="{size[0]}" height="{size[1]}"' if size else ""
         sanitiser.out[idx] = sanitiser.out[idx].replace(
-            f'src="{html.escape(src, quote=True)}"', f'src="{{{{ \'{local}\' | relative_url }}}}"', 1)
+            f'src="{html.escape(src, quote=True)}"', f'src="{{{{ \'{local}\' | relative_url }}}}"{dims}', 1)
         first = first or local
     return first
 

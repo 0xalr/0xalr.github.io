@@ -21,13 +21,9 @@ social:
   instagram: https://www.instagram.com/0xalr
   hackerone: https://hackerone.com/x0xalr
 
-# Contact form (delivered by FormSubmit — https://formsubmit.co).
-# After you click "Activate" in FormSubmit's first email, you can replace the
-# address below with the random alias string FormSubmit gives you, so your email
-# address no longer appears in the page source.
+# Shown on the Contact page.
 contact:
-  formsubmit_id: 3bddagg3@gmail.com
-  subject: New message from 0xalr.github.io
+  email: 3bddagg3@gmail.com
 
 og_image: /assets/img/og-image.png
 

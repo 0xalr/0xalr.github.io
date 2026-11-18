@@ -38,9 +38,16 @@
   function setupHeader() {
     var header = document.querySelector(".site-header");
     if (header) {
-      var onScroll = function () { header.classList.toggle("is-scrolled", window.scrollY > 8); };
-      onScroll();
-      window.addEventListener("scroll", onScroll, { passive: true });
+      var ticking = false, scrolled = null;
+      var update = function () {
+        ticking = false;
+        var s = window.scrollY > 8;
+        if (s !== scrolled) { scrolled = s; header.classList.toggle("is-scrolled", s); }
+      };
+      update();
+      window.addEventListener("scroll", function () {
+        if (!ticking) { ticking = true; requestAnimationFrame(update); }
+      }, { passive: true });
     }
     var btn = document.querySelector(".menu-toggle");
     var nav = document.getElementById("site-nav");
@@ -77,13 +84,17 @@
     els.forEach(function (el) { io.observe(el); });
   }
 
-  /* ---------- ambient particles ---------- */
+  /* ---------- ambient particles ----------
+     Capped at ~30fps, few particles, paused while scrolling, when the tab is hidden,
+     and for reduced-motion users, so it never competes with scrolling. */
   function setupParticles() {
     var canvas = document.querySelector(".particles");
     if (!canvas || !canvas.getContext) return function () {};
-    var ctx = canvas.getContext("2d");
-    var dpr = Math.min(window.devicePixelRatio || 1, 2);
-    var w = 0, h = 0, parts = [], color = "164,184,108", raf = null;
+    var ctx = canvas.getContext("2d", { alpha: true });
+    var dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+    var w = 0, h = 0, parts = [], color = "164,184,108", raf = null, lastT = 0, scrolling = false, scrollTimer;
+    var FRAME = 1000 / 30;
+    var orbit = document.querySelector(".hero .orbit"), angle = 0;
 
     function readColor() {
       var c = getComputedStyle(root).getPropertyValue("--accent").trim();
@@ -97,43 +108,63 @@
       w = window.innerWidth; h = window.innerHeight;
       canvas.width = Math.round(w * dpr); canvas.height = Math.round(h * dpr);
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      var count = Math.round(Math.min(70, Math.max(26, (w * h) / 24000)));
+      var count = Math.round(Math.min(42, Math.max(18, (w * h) / 36000)));
       parts = [];
       for (var i = 0; i < count; i++) {
         parts.push({
           x: Math.random() * w, y: Math.random() * h,
-          r: Math.random() * 1.4 + 0.4,
-          vx: (Math.random() - 0.5) * 0.12, vy: -(Math.random() * 0.18 + 0.03),
-          a: Math.random() * 0.5 + 0.15, tw: Math.random() * Math.PI * 2
+          r: Math.random() * 1.3 + 0.5,
+          vx: (Math.random() - 0.5) * 0.25, vy: -(Math.random() * 0.35 + 0.06),
+          a: Math.random() * 0.45 + 0.18, tw: Math.random() * Math.PI * 2
         });
       }
     }
-    function draw(t) {
+    function paint(t) {
       ctx.clearRect(0, 0, w, h);
       for (var i = 0; i < parts.length; i++) {
         var p = parts[i];
-        if (!reduceMotion) {
-          p.x += p.vx; p.y += p.vy;
-          if (p.y < -5) { p.y = h + 5; p.x = Math.random() * w; }
-          if (p.x < -5) p.x = w + 5; else if (p.x > w + 5) p.x = -5;
-        }
-        var alpha = p.a * (0.65 + 0.35 * Math.sin((t || 0) / 1400 + p.tw));
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-        ctx.fillStyle = "rgba(" + color + "," + alpha.toFixed(3) + ")";
-        ctx.fill();
+        ctx.globalAlpha = p.a * (0.65 + 0.35 * Math.sin(t / 1400 + p.tw));
+        ctx.fillStyle = "rgb(" + color + ")";
+        ctx.fillRect(p.x - p.r, p.y - p.r, p.r * 2, p.r * 2);
       }
-      if (!reduceMotion) raf = requestAnimationFrame(draw);
+      ctx.globalAlpha = 1;
     }
-    function start() { if (raf == null) { raf = requestAnimationFrame(draw); } }
+    function step(t) {
+      raf = requestAnimationFrame(step);
+      if (scrolling || t - lastT < FRAME) return;
+      var dt = Math.min((t - lastT) / 16.7, 3); lastT = t;
+      if (orbit) { angle = (angle + 0.0375 * dt) % 360; orbit.style.transform = "rotate(" + angle.toFixed(3) + "deg)"; }
+      for (var i = 0; i < parts.length; i++) {
+        var p = parts[i];
+        p.x += p.vx * dt; p.y += p.vy * dt;
+        if (p.y < -5) { p.y = h + 5; p.x = Math.random() * w; }
+        if (p.x < -5) p.x = w + 5; else if (p.x > w + 5) p.x = -5;
+      }
+      paint(t);
+    }
+    var live = false;
+    function start() { if (raf == null && live && !reduceMotion && !document.hidden) raf = requestAnimationFrame(step); }
     function stop() { if (raf != null) { cancelAnimationFrame(raf); raf = null; } }
 
-    readColor(); resize(); draw(0);
-    if (!reduceMotion) start();
+    readColor(); resize(); paint(0);
+    // Animate only while the homepage hero is visible; elsewhere the particles are a still image.
+    var hero = document.querySelector(".page-home .hero");
+    if (hero && "IntersectionObserver" in window) {
+      new IntersectionObserver(function (entries) {
+        live = entries[0].isIntersecting;
+        root.classList.toggle("ambient-live", live);
+        if (live) start(); else stop();
+      }, { threshold: 0.15 }).observe(hero);
+    }
     var rt;
-    window.addEventListener("resize", function () { clearTimeout(rt); rt = setTimeout(function () { resize(); if (reduceMotion) draw(0); }, 150); });
-    document.addEventListener("visibilitychange", function () { if (document.hidden) stop(); else if (!reduceMotion) start(); });
-    return function () { readColor(); if (reduceMotion) draw(0); };
+    window.addEventListener("resize", function () { clearTimeout(rt); rt = setTimeout(function () { resize(); paint(lastT); }, 200); });
+    window.addEventListener("scroll", function () {
+      if (!scrolling) { scrolling = true; root.classList.add("is-scrolling"); }
+      clearTimeout(scrollTimer);
+      scrollTimer = setTimeout(function () { scrolling = false; root.classList.remove("is-scrolling"); }, 160);
+    }, { passive: true });
+    document.addEventListener("visibilitychange", function () { if (document.hidden) stop(); else start(); });
+    return function () { readColor(); paint(lastT); };
   }
 
   /* ---------- writeup filters ---------- */
@@ -160,69 +191,39 @@
     });
   }
 
-  /* ---------- contact form ---------- */
-  function setupContact() {
-    var form = document.getElementById("contact-form");
-    if (!form || !window.fetch) return;
-    var status = form.querySelector(".form-status");
-    var btn = form.querySelector("button[type=submit]");
-    var label = btn.querySelector(".btn-label");
-    var fields = [
-      { el: form.elements.name, err: document.getElementById("f-name-err"), ok: function (v) { return v.trim().length > 0; } },
-      { el: form.elements.email, err: document.getElementById("f-email-err"), ok: function (v) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim()); } },
-      { el: form.elements.message, err: document.getElementById("f-message-err"), ok: function (v) { return v.trim().length > 0; } }
-    ];
-    function check(f) {
-      var good = f.ok(f.el.value);
-      f.el.setAttribute("aria-invalid", good ? "false" : "true");
-      if (good) f.el.removeAttribute("aria-describedby"); else f.el.setAttribute("aria-describedby", f.err.id);
-      f.err.hidden = good;
-      return good;
-    }
-    fields.forEach(function (f) {
-      f.el.addEventListener("blur", function () { if (f.el.value) check(f); });
-      f.el.addEventListener("input", function () { if (f.el.getAttribute("aria-invalid") === "true") check(f); });
-    });
-    function setStatus(msg, kind) {
-      status.textContent = msg;
-      status.className = "form-status" + (kind ? " is-" + kind : "");
-    }
-
-    form.addEventListener("submit", function (e) {
-      e.preventDefault();
-      var firstBad = null;
-      fields.forEach(function (f) { if (!check(f) && !firstBad) firstBad = f.el; });
-      if (firstBad) { firstBad.focus(); setStatus("Please fix the highlighted fields.", "err"); return; }
-
-      var data = {};
-      new FormData(form).forEach(function (v, k) { data[k] = v; });
-      if (data._honey) return; // bot
-      data._replyto = data.email;
-
-      btn.disabled = true; label.textContent = "Sending…"; setStatus("");
-      fetch(form.getAttribute("data-ajax"), {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "Accept": "application/json" },
-        body: JSON.stringify(data)
-      }).then(function (r) {
-        return r.json().catch(function () { return {}; }).then(function (j) { return { ok: r.ok, body: j }; });
-      }).then(function (res) {
-        var success = res.ok && (res.body.success === true || res.body.success === "true");
-        if (success) {
-          form.reset();
-          fields.forEach(function (f) { f.el.removeAttribute("aria-invalid"); });
-          setStatus("Thanks — your message is on its way. I'll reply by email.", "ok");
-        } else if (/activat/i.test(res.body.message || "")) {
-          setStatus("The contact form is still being set up, so your message wasn't delivered. Please try again later.", "err");
-        } else {
-          setStatus("Sorry, the message couldn't be sent" + (res.body.message ? " (" + res.body.message + ")" : "") + ". Please try again in a moment.", "err");
-        }
-      }).catch(function () {
-        setStatus("Network error — please check your connection and try again.", "err");
-      }).then(function () {
-        btn.disabled = false; label.textContent = "Send message";
+  /* ---------- contact: copy email ---------- */
+  function setupCopy() {
+    var btn = document.querySelector(".copy-email");
+    if (!btn || !navigator.clipboard) return;
+    var status = document.querySelector(".copy-status");
+    btn.hidden = false;
+    btn.addEventListener("click", function () {
+      navigator.clipboard.writeText(btn.getAttribute("data-email")).then(function () {
+        btn.textContent = "Copied ✓";
+        if (status) status.textContent = "Email address copied to clipboard.";
+        setTimeout(function () { btn.textContent = "Copy address"; if (status) status.textContent = ""; }, 2200);
       });
     });
+  }
+
+  /* ---------- instant navigation fallback ----------
+     Browsers with Speculation Rules (Chrome/Edge) prerender pages on hover via the
+     <script type="speculationrules"> in <head>. Others get a hover/touch prefetch. */
+  function setupPrefetch() {
+    if (HTMLScriptElement.supports && HTMLScriptElement.supports("speculationrules")) return;
+    var done = {};
+    function prefetch(e) {
+      var a = e.target.closest && e.target.closest("a[href]");
+      if (!a || a.origin !== location.origin || a.target === "_blank" || a.hash && a.pathname === location.pathname) return;
+      var url = a.pathname;
+      if (done[url]) return;
+      done[url] = true;
+      var l = document.createElement("link");
+      l.rel = "prefetch"; l.href = url;
+      document.head.appendChild(l);
+    }
+    document.addEventListener("mouseover", prefetch, { passive: true });
+    document.addEventListener("touchstart", prefetch, { passive: true });
   }
 
   document.addEventListener("DOMContentLoaded", function () {
@@ -231,6 +232,7 @@
     setupHeader();
     setupReveal();
     setupFilters();
-    setupContact();
+    setupCopy();
+    setupPrefetch();
   });
 })();

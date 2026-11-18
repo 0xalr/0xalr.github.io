@@ -25,11 +25,11 @@ tags: ["Account Takeover", "Access Control", "API"]
 <p dir="auto">I was surprised that the following endpoint `/<strong>Api/v2.0/User/Rename</strong>` is working and returning an error in response asking for the `emailId` and `renameEmailId` parameters.</p>
 <p dir="auto">one something that came to my mind is to put the victim’s email in the emailId parameter and the attacker’s email in the renameEmailId parameter.</p>
 <p dir="auto">After testing, it became clear that it is possible to change any user’s email to my own, meaning that the process is done without any Authorization or Ownership Validation.</p>
-<figure><img src="{% endraw %}{{ '/assets/img/writeups/account-takeover-insecure-email-change/01.png' | relative_url }}{% raw %}" alt="" loading="lazy" decoding="async"></figure>
+<figure><img src="{% endraw %}{{ '/assets/img/writeups/account-takeover-insecure-email-change/01.webp' | relative_url }}{% raw %}" width="1400" height="654" alt="" loading="lazy" decoding="async"></figure>
 <h3 dir="auto">Impact</h3>
 <p dir="auto">Full control over any user’s account.</p>
 <h3 dir="auto">Report</h3>
-<figure><img src="{% endraw %}{{ '/assets/img/writeups/account-takeover-insecure-email-change/02.png' | relative_url }}{% raw %}" alt="" loading="lazy" decoding="async"></figure>
+<figure><img src="{% endraw %}{{ '/assets/img/writeups/account-takeover-insecure-email-change/02.webp' | relative_url }}{% raw %}" width="262" height="517" alt="" loading="lazy" decoding="async"></figure>
 <h3 dir="auto">📌 Conclusion</h3>
 <p dir="auto">This vulnerability demonstrates the danger of neglecting verification when updating sensitive data such as email. Despite its technical simplicity, its impact is devastating, as it allows an attacker to take over a full account with the click of a button.</p>
 <h4 dir="auto"><strong>Contact me:</strong></h4><p dir="auto">x: <a href="https://x.com/00xalr" target="_blank" rel="noopener">https://x.com/00xalr</a></p>

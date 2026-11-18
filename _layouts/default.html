@@ -5,15 +5,7 @@
 </head>
 <body class="page-{{ page.slug | default: 'default' }}">
 <div class="backdrop" aria-hidden="true">
-  <div class="backdrop-grid"></div>
-  <div class="backdrop-glow backdrop-glow--a"></div>
-  <div class="backdrop-glow backdrop-glow--b"></div>
-  <svg class="orbits" viewBox="0 0 1000 1000" preserveAspectRatio="xMidYMid slice">
-    <g class="orbit o1"><ellipse cx="500" cy="500" rx="430" ry="150"/><circle r="3.2" cx="930" cy="500"/></g>
-    <g class="orbit o2"><ellipse cx="500" cy="500" rx="360" ry="215"/><circle r="2.6" cx="140" cy="500"/></g>
-    <g class="orbit o3"><ellipse cx="500" cy="500" rx="470" ry="96"/></g>
-  </svg>
-  <canvas class="particles"></canvas>
+  {%- if page.slug == "home" %}<canvas class="particles"></canvas>{% endif -%}
 </div>
 {% include header.html %}
 <main id="main" tabindex="-1">

@@ -2,56 +2,31 @@
 layout: default
 title: Contact
 slug: contact
-description: Contact Abdalkreem (ALR), cybersecurity researcher and bug hunter.
+description: Contact Abdalkreem (ALR), cybersecurity researcher and offensive security specialist, by email.
 ---
 <section class="page-hero">
   <div class="wrap">
     <p class="kicker reveal">Contact</p>
     <h1 class="page-title reveal">Get in touch</h1>
-    <p class="lede reveal">Questions, collaboration or security research. Send a message and I'll reply by email.</p>
   </div>
 </section>
 
 <section class="section section--tight">
   <div class="wrap">
-    <form class="panel contact-form reveal" id="contact-form"
-          action="https://formsubmit.co/{{ site.contact.formsubmit_id }}" method="POST"
-          data-ajax="https://formsubmit.co/ajax/{{ site.contact.formsubmit_id }}" novalidate>
-      <input type="hidden" name="_subject" value="{{ site.contact.subject }}">
-      <input type="hidden" name="_template" value="table">
-      <input type="hidden" name="_captcha" value="false">
-      <input type="hidden" name="_next" value="{{ '/contact/thanks/' | absolute_url }}">
-      <div class="hp" aria-hidden="true">
-        <label for="f-honey">Leave this field empty</label>
-        <input type="text" id="f-honey" name="_honey" tabindex="-1" autocomplete="off">
-      </div>
-
-      <div class="field-row">
-        <div class="field">
-          <label for="f-name">Name</label>
-          <input id="f-name" name="name" type="text" autocomplete="name" required maxlength="120" placeholder="Your name">
-          <p class="field-error" id="f-name-err" hidden>Please enter your name.</p>
-        </div>
-        <div class="field">
-          <label for="f-email">Email</label>
-          <input id="f-email" name="email" type="email" autocomplete="email" required maxlength="200" placeholder="you@example.com">
-          <p class="field-error" id="f-email-err" hidden>Please enter a valid email address.</p>
-        </div>
-      </div>
-      <div class="field">
-        <label for="f-message">Message</label>
-        <textarea id="f-message" name="message" rows="8" required maxlength="5000" placeholder="How can I help?"></textarea>
-        <p class="field-error" id="f-message-err" hidden>Please write a message.</p>
-      </div>
-
-      <div class="form-foot">
-        <p class="form-note">Goes straight to my inbox.</p>
-        <button class="btn btn--primary btn--send" type="submit">
-          <span class="btn-label">Send message</span>
+    <div class="panel contact-card reveal">
+      <span class="contact-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="26" height="26"><rect x="3" y="5" width="18" height="14" rx="3" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="m4 7 8 6 8-6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </span>
+      <p class="contact-lede">Have a question, a security issue to discuss, or an opportunity to collaborate? Send me an email. I read every message.</p>
+      <a class="contact-email" href="mailto:{{ site.contact.email }}">{{ site.contact.email }}</a>
+      <div class="contact-actions">
+        <a class="btn btn--primary" href="mailto:{{ site.contact.email }}">
+          Email me
           <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M21.5 2.5 10.6 13.4M21.5 2.5l-6.9 19-4-8.1-8.1-4Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </button>
+        </a>
+        <button class="btn btn--ghost copy-email" type="button" data-email="{{ site.contact.email }}" hidden>Copy address</button>
       </div>
-      <p class="form-status" role="status" aria-live="polite"></p>
-    </form>
+      <p class="copy-status" role="status" aria-live="polite"></p>
+    </div>
   </div>
 </section>
