@@ -39,6 +39,7 @@ defaults:
       type: writeups
     values:
       layout: writeup
+      severity: Critical   # badge shown before the title on the Writeups page; override per writeup
 
 plugins:
   - jekyll-sitemap

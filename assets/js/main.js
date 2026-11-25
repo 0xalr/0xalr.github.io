@@ -167,6 +167,114 @@
     return function () { readColor(); paint(lastT); };
   }
 
+  /* ---------- mouse trail ----------
+     A short glowing comet tail behind the cursor plus a small ring on click.
+     Mouse users only (no touch/pen), off for reduced motion. The canvas is drawn only
+     while there is something to show, so an idle pointer costs nothing. */
+  var finePointer = window.matchMedia && window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+  function setupTrail() {
+    if (reduceMotion || !finePointer) return function () {};
+    var c = document.createElement("canvas");
+    c.className = "cursor-trail"; c.setAttribute("aria-hidden", "true");
+    document.body.appendChild(c);
+    var ctx = c.getContext("2d");
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var w = 0, h = 0, pts = [], rings = [], raf = null, rgb = "164,184,108";
+    var LIFE = 360, RING = 520, MAX = 40;
+
+    function size() {
+      w = window.innerWidth; h = window.innerHeight;
+      c.width = Math.round(w * dpr); c.height = Math.round(h * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+    function readColor() {
+      var m = /^#([0-9a-f]{6})$/i.exec(getComputedStyle(root).getPropertyValue("--accent").trim());
+      if (m) { var n = parseInt(m[1], 16); rgb = ((n >> 16) & 255) + "," + ((n >> 8) & 255) + "," + (n & 255); }
+    }
+    function kick() { if (raf == null) raf = requestAnimationFrame(frame); }
+    function add(x, y, t) {
+      var last = pts[pts.length - 1];
+      if (last && Math.abs(last.x - x) + Math.abs(last.y - y) < 3) { last.t = t; return; }
+      pts.push({ x: x, y: y, t: t });
+      if (pts.length > MAX) pts.shift();
+    }
+    function frame(now) {
+      raf = null;
+      ctx.clearRect(0, 0, w, h);
+      while (pts.length && now - pts[0].t > LIFE) pts.shift();
+      while (rings.length && now - rings[0].t > RING) rings.shift();
+      var n = pts.length;
+      if (n > 1) {
+        ctx.lineCap = "round"; ctx.lineJoin = "round";
+        for (var pass = 0; pass < 2; pass++) {
+          for (var i = 1; i < n; i++) {
+            var a = pts[i - 1], b = pts[i];
+            var f = Math.max(0, 1 - (now - b.t) / LIFE) * (i / (n - 1)); // fades with age and toward the tail
+            if (f <= 0.01) continue;
+            ctx.strokeStyle = "rgba(" + rgb + "," + (pass ? 0.9 * f : 0.16 * f).toFixed(3) + ")";
+            ctx.lineWidth = pass ? 0.8 + 2.4 * f : 4 + 10 * f;
+            ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
+          }
+        }
+      }
+      if (n) {
+        var head = pts[n - 1], k = Math.max(0, 1 - (now - head.t) / LIFE);
+        if (k > 0) {
+          var g = ctx.createRadialGradient(head.x, head.y, 0, head.x, head.y, 14);
+          g.addColorStop(0, "rgba(" + rgb + "," + (0.55 * k).toFixed(3) + ")");
+          g.addColorStop(1, "rgba(" + rgb + ",0)");
+          ctx.fillStyle = g; ctx.beginPath(); ctx.arc(head.x, head.y, 14, 0, 6.2832); ctx.fill();
+        }
+      }
+      for (var j = 0; j < rings.length; j++) {
+        var r = rings[j], p = (now - r.t) / RING, e = 1 - Math.pow(1 - p, 3);
+        ctx.strokeStyle = "rgba(" + rgb + "," + (0.7 * (1 - p)).toFixed(3) + ")";
+        ctx.lineWidth = 1.5;
+        ctx.beginPath(); ctx.arc(r.x, r.y, 4 + 22 * e, 0, 6.2832); ctx.stroke();
+      }
+      if (pts.length || rings.length) raf = requestAnimationFrame(frame);
+    }
+
+    size(); readColor();
+    window.addEventListener("pointermove", function (e) {
+      if (e.pointerType !== "mouse") return;
+      var now = performance.now();
+      var list = e.getCoalescedEvents ? e.getCoalescedEvents() : [];
+      if (!list.length) list = [e];
+      for (var i = 0; i < list.length; i++) add(list[i].clientX, list[i].clientY, now);
+      kick();
+    }, { passive: true });
+    window.addEventListener("pointerdown", function (e) {
+      if (e.pointerType !== "mouse") return;
+      rings.push({ x: e.clientX, y: e.clientY, t: performance.now() });
+      kick();
+    }, { passive: true });
+    document.documentElement.addEventListener("mouseleave", function () { pts = []; });
+    var rt;
+    window.addEventListener("resize", function () { clearTimeout(rt); rt = setTimeout(size, 150); });
+    return readColor;
+  }
+
+  /* ---------- cursor spotlight on panels and cards ---------- */
+  function setupSpotlight() {
+    if (!finePointer) return;
+    document.querySelectorAll(".panel:not(.writeup-body), .card").forEach(function (el) { el.classList.add("spot"); });
+    var ev = null, queued = false;
+    document.addEventListener("pointermove", function (e) {
+      ev = e;
+      if (queued) return;
+      queued = true;
+      requestAnimationFrame(function () {
+        queued = false;
+        var el = ev.target && ev.target.closest && ev.target.closest(".spot");
+        if (!el) return;
+        var r = el.getBoundingClientRect();
+        el.style.setProperty("--mx", (ev.clientX - r.left).toFixed(0) + "px");
+        el.style.setProperty("--my", (ev.clientY - r.top).toFixed(0) + "px");
+      });
+    }, { passive: true });
+  }
+
   /* ---------- writeup filters ---------- */
   function setupFilters() {
     var bar = document.querySelector(".filters");
@@ -228,7 +336,9 @@
 
   document.addEventListener("DOMContentLoaded", function () {
     var refreshParticles = setupParticles();
-    setupTheme(refreshParticles);
+    var refreshTrail = setupTrail();
+    setupTheme(function () { refreshParticles(); refreshTrail(); });
+    setupSpotlight();
     setupHeader();
     setupReveal();
     setupFilters();

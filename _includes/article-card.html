@@ -1,13 +1,20 @@
 {%- comment -%}
-  Renders one writeup in the Writeups list: title and description only.
-  Usage: {% include article-card.html article=a %}  (`article` is a document from the _writeups collection)
+  Renders one writeup row in the Writeups list: severity badge, title and description.
+  Usage: {% include article-card.html article=a index=forloop.index %}
   data-tags is kept so the topic filters keep working.
 {%- endcomment -%}
 {%- assign a = include.article -%}
 {%- assign tags_attr = a.tags | join: "|" -%}
+{%- assign sev = a.severity | default: "" -%}
 <article class="card card--text reveal" data-tags="{{ tags_attr | escape }}">
   <div class="card-body">
-    <h3 class="card-title"><a href="{{ a.url | relative_url }}">{{ a.title }}</a></h3>
-    <p class="card-summary">{{ a.summary | strip | markdownify | remove: "<p>" | remove: "</p>" | strip }}</p>
+    {%- if include.index %}<span class="card-index" aria-hidden="true">{% if include.index < 10 %}0{% endif %}{{ include.index }}</span>{% endif %}
+    <div class="card-main">
+      <h3 class="card-title">
+        {%- if sev != "" -%}<span class="sev sev--{{ sev | slugify }}"><span class="sev-dot" aria-hidden="true"></span>{{ sev }}</span>{%- endif %}
+        <a href="{{ a.url | relative_url }}">{{ a.title }}</a></h3>
+      <p class="card-summary">{{ a.summary | strip | markdownify | remove: "<p>" | remove: "</p>" | strip }}</p>
+    </div>
+    <span class="card-go" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18"><path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
   </div>
 </article>

@@ -28,7 +28,7 @@ description: Bug bounty write-ups by Abdalkreem (ALR) covering IDOR, authenticat
     <p class="filter-status sr-only" aria-live="polite"></p>
     <div class="card-grid card-grid--list">
       {%- for a in articles -%}
-        {% include article-card.html article=a %}
+        {% include article-card.html article=a index=forloop.index %}
       {%- endfor -%}
     </div>
   </div>

@@ -5,6 +5,7 @@ slug: writeup
 {%- assign all = site.writeups | sort: "date" | reverse -%}
 {%- assign words = content | strip_html | number_of_words -%}
 {%- assign minutes = words | divided_by: 200 | plus: 1 -%}
+<div class="read-progress" aria-hidden="true"></div>
 <article class="writeup" itemscope itemtype="https://schema.org/BlogPosting">
   <header class="wrap writeup-head">
     <a class="back-link reveal" href="{{ '/writeups/' | relative_url }}"><span aria-hidden="true">←</span> All writeups</a>

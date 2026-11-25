@@ -40,12 +40,14 @@ cover_alt: "What the cover shows"
 cover_fit: cover                             # or "contain" for very wide/tall screenshots
 summary: "One to three sentences for the card."
 tags: ["IDOR", "API"]
+severity: Critical                           # optional; every writeup is "Critical" unless you set another value
 ---
 <p>Article HTML goes here…</p>
 ```
 
-Writeups are sorted by `date`, newest first. The newest one is featured on the homepage, and the
-Writeups page lists them all with topic filters built from `tags`.
+Writeups are sorted by `date`, newest first. The Writeups page lists them all (severity label,
+title and summary) with topic filters built from `tags`. The red label comes from `severity`, which
+defaults to `Critical` in `_config.yml`.
 
 ## Add certifications
 
