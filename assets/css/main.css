@@ -341,6 +341,18 @@ p { margin: 0 0 1em; }
   content: "Latest"; padding: 3px 10px; border-radius: 999px; background: var(--accent); color: var(--accent-ink); font-weight: 500;
 }
 .card.is-hidden { display: none; }
+/* Writeups list: one horizontal row per post */
+.card-grid--list { grid-template-columns: 1fr; }
+.card-grid--list .card { display: grid; grid-template-columns: minmax(0, 300px) minmax(0, 1fr); align-items: stretch; }
+.card-grid--list .card-media { position: relative; aspect-ratio: auto; min-height: 200px; border-bottom: 0; margin: 8px 0 8px 8px; }
+.card-grid--list .card-media img { position: absolute; inset: 0; }
+.card-grid--list .card-body { padding: clamp(20px, 2.6vw, 30px); justify-content: center; }
+.card-grid--list .card-summary { max-width: 70ch; }
+@media (max-width: 640px) {
+  .card-grid--list .card { grid-template-columns: 1fr; }
+  .card-grid--list .card-media { min-height: 0; aspect-ratio: 16 / 9; margin: 8px 8px 0; }
+  .card-grid--list .card-media img { position: static; }
+}
 
 /* filters */
 .filters { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 28px; }

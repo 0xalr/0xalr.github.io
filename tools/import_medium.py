@@ -263,6 +263,8 @@ def main():
         cover = download_images(slug, san.images, san, args.dry_run)
         body = strip_title_heading("".join(san.out), title)
         body = re.sub(r"<p dir=\"auto\">\s*</p>", "", body)
+        # The first image is the featured/cover image shown on the listing; don't repeat it at the top of the article.
+        body = re.sub(r"^\s*<figure>\s*<img[^>]*>\s*(<figcaption>.*?</figcaption>\s*)?</figure>\s*", "", body, count=1, flags=re.S)
         body = body.replace("</p><", "</p>\n<").replace("</h3><", "</h3>\n<").replace("</figure><", "</figure>\n<").replace("</pre><", "</pre>\n<")
 
         path = os.path.join(COLL, slug + ".html")
