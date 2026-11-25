@@ -1,27 +1,13 @@
 {%- comment -%}
-  Renders one article card. Usage: {% include article-card.html article=a featured=false %}
-  `article` is a document from the _writeups collection.
+  Renders one writeup in the Writeups list: title and description only.
+  Usage: {% include article-card.html article=a %}  (`article` is a document from the _writeups collection)
+  data-tags is kept so the topic filters keep working.
 {%- endcomment -%}
 {%- assign a = include.article -%}
-{%- assign cover = a.cover -%}
-{%- unless cover contains "://" -%}{%- assign cover = cover | relative_url -%}{%- endunless -%}
 {%- assign tags_attr = a.tags | join: "|" -%}
-{%- assign href = a.url | relative_url -%}
-<article class="card{% if include.featured %} card--featured{% endif %} reveal" data-tags="{{ tags_attr | escape }}">
-  <a class="card-media{% if a.cover_fit == 'contain' %} is-contain{% endif %}" href="{{ href }}" tabindex="-1" aria-hidden="true">
-    <img src="{{ cover }}" alt="{{ a.cover_alt | escape }}" loading="{% if include.featured %}eager{% else %}lazy{% endif %}" decoding="async"{% if a.cover_pos %} style="object-position: {{ a.cover_pos }}"{% endif %}>
-  </a>
+<article class="card card--text reveal" data-tags="{{ tags_attr | escape }}">
   <div class="card-body">
-    <div class="card-meta">
-      <time datetime="{{ a.date | date: '%Y-%m-%d' }}">{{ a.date | date: "%b %-d, %Y" }}</time>
-      {%- if a.tags -%}
-      <ul class="tags" aria-label="Topics">
-        {%- for t in a.tags -%}<li>{{ t }}</li>{%- endfor -%}
-      </ul>
-      {%- endif -%}
-    </div>
-    <h3 class="card-title"><a href="{{ href }}">{{ a.title }}</a></h3>
+    <h3 class="card-title"><a href="{{ a.url | relative_url }}">{{ a.title }}</a></h3>
     <p class="card-summary">{{ a.summary | strip | markdownify | remove: "<p>" | remove: "</p>" | strip }}</p>
-    <a class="card-cta" href="{{ href }}">Read writeup<span class="sr-only">: {{ a.title }}</span> <span class="arrow" aria-hidden="true">→</span></a>
   </div>
 </article>
