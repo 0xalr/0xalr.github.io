@@ -8,9 +8,14 @@
   {%- if page.slug == "home" %}<canvas class="particles"></canvas>{% endif -%}
 </div>
 {% include header.html %}
-<main id="main" tabindex="-1">
+<div class="wrap shell">
+  <aside class="shell-side" aria-label="About the author">
+    {% include profile-card.html %}
+  </aside>
+  <main id="main" tabindex="-1">
 {{ content }}
-</main>
+  </main>
+</div>
 {% include footer.html %}
 </body>
 </html>

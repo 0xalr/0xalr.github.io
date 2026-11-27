@@ -168,7 +168,7 @@
   }
 
   /* ---------- mouse trail ----------
-     A short glowing comet tail behind the cursor plus a small ring on click.
+     A short, thin tail behind the cursor plus a small ring on click.
      Mouse users only (no touch/pen), off for reduced motion. The canvas is drawn only
      while there is something to show, so an idle pointer costs nothing. */
   var finePointer = window.matchMedia && window.matchMedia("(hover: hover) and (pointer: fine)").matches;
@@ -211,8 +211,8 @@
             var a = pts[i - 1], b = pts[i];
             var f = Math.max(0, 1 - (now - b.t) / LIFE) * (i / (n - 1)); // fades with age and toward the tail
             if (f <= 0.01) continue;
-            ctx.strokeStyle = "rgba(" + rgb + "," + (pass ? 0.9 * f : 0.16 * f).toFixed(3) + ")";
-            ctx.lineWidth = pass ? 0.8 + 2.4 * f : 4 + 10 * f;
+            ctx.strokeStyle = "rgba(" + rgb + "," + (pass ? 0.8 * f : 0.07 * f).toFixed(3) + ")";
+            ctx.lineWidth = pass ? 0.7 + 1.8 * f : 3 + 6 * f;
             ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
           }
         }
@@ -220,10 +220,10 @@
       if (n) {
         var head = pts[n - 1], k = Math.max(0, 1 - (now - head.t) / LIFE);
         if (k > 0) {
-          var g = ctx.createRadialGradient(head.x, head.y, 0, head.x, head.y, 14);
-          g.addColorStop(0, "rgba(" + rgb + "," + (0.55 * k).toFixed(3) + ")");
+          var g = ctx.createRadialGradient(head.x, head.y, 0, head.x, head.y, 9);
+          g.addColorStop(0, "rgba(" + rgb + "," + (0.35 * k).toFixed(3) + ")");
           g.addColorStop(1, "rgba(" + rgb + ",0)");
-          ctx.fillStyle = g; ctx.beginPath(); ctx.arc(head.x, head.y, 14, 0, 6.2832); ctx.fill();
+          ctx.fillStyle = g; ctx.beginPath(); ctx.arc(head.x, head.y, 9, 0, 6.2832); ctx.fill();
         }
       }
       for (var j = 0; j < rings.length; j++) {
@@ -253,26 +253,6 @@
     var rt;
     window.addEventListener("resize", function () { clearTimeout(rt); rt = setTimeout(size, 150); });
     return readColor;
-  }
-
-  /* ---------- cursor spotlight on panels and cards ---------- */
-  function setupSpotlight() {
-    if (!finePointer) return;
-    document.querySelectorAll(".panel:not(.writeup-body), .card").forEach(function (el) { el.classList.add("spot"); });
-    var ev = null, queued = false;
-    document.addEventListener("pointermove", function (e) {
-      ev = e;
-      if (queued) return;
-      queued = true;
-      requestAnimationFrame(function () {
-        queued = false;
-        var el = ev.target && ev.target.closest && ev.target.closest(".spot");
-        if (!el) return;
-        var r = el.getBoundingClientRect();
-        el.style.setProperty("--mx", (ev.clientX - r.left).toFixed(0) + "px");
-        el.style.setProperty("--my", (ev.clientY - r.top).toFixed(0) + "px");
-      });
-    }, { passive: true });
   }
 
   /* ---------- writeup filters ---------- */
@@ -338,7 +318,6 @@
     var refreshParticles = setupParticles();
     var refreshTrail = setupTrail();
     setupTheme(function () { refreshParticles(); refreshTrail(); });
-    setupSpotlight();
     setupHeader();
     setupReveal();
     setupFilters();

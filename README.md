@@ -55,6 +55,13 @@ Put the certificate image in `assets/img/certs/` and add an entry to `_data/cert
 (`name`, `short`, `issuer`, `date`, `expires`, `image`, `url`, `credential`). The image and the
 "Verify credential" link both open `url`.
 
+## Profile card
+
+The card beside every page (left column on desktop, above the content on tablets and phones)
+reads `profile:` in `_config.yml`: `name`, `handle`, `description` and `image`. Its HackerOne and
+X buttons use `social.hackerone` and `social.x`. To change the photo, replace
+`assets/img/profile.webp` with a square image (320×320 works well).
+
 ## Contact
 
 The Contact page shows your email address, with an "Email me" button and a "Copy address" button.

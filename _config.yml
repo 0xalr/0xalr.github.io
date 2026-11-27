@@ -21,6 +21,14 @@ social:
   instagram: https://www.instagram.com/0xalr
   hackerone: https://hackerone.com/x0xalr
 
+# Profile card shown beside every page (left column on desktop, above the content on mobile).
+# Its two buttons use social.hackerone and social.x above.
+profile:
+  name: Abdalkreem Dagga
+  handle: "@alr"
+  description: Security Researcher
+  image: /assets/img/profile.webp   # 320x320 copy of the LinkedIn photo
+
 # Shown on the Contact page.
 contact:
   email: 3bddagg3@gmail.com
