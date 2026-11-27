@@ -266,7 +266,7 @@ main { min-width: 0; }
     linear-gradient(var(--accent), var(--accent)) 100% 100% / 1px 9px no-repeat;
   opacity: .55;
 }
-.profile-photo { position: relative; width: 112px; height: 112px; margin-bottom: 18px; }
+.profile-photo { position: relative; width: 112px; height: 112px; margin: 0 auto 20px; } /* centred; text below stays left-aligned */
 .profile-photo img {
   width: 100%; height: 100%; border-radius: 50%; object-fit: cover;
   padding: 4px; background: var(--bg);
@@ -611,10 +611,10 @@ main { min-width: 0; }
   .shell { grid-template-columns: minmax(0, 1fr); padding-top: 18px; }
   .shell-side { position: static; margin-bottom: clamp(8px, 3vw, 24px); }
   .profile {
-    display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center;
-    gap: 14px 20px; padding: 18px 20px;
+    display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center;
+    gap: 14px 20px; padding: 20px 20px 18px;
   }
-  .profile-photo { width: 84px; height: 84px; margin: 0; }
+  .profile-photo { grid-column: 1 / -1; justify-self: center; width: 92px; height: 92px; margin: 0 0 6px; }
   .profile-status { right: 3px; bottom: 3px; width: 14px; height: 14px; }
   .profile-desc { border-top: 0; padding-top: 0; }
   .profile-handle { margin-bottom: 6px; }
@@ -640,7 +640,7 @@ main { min-width: 0; }
   .site-nav a:hover { background: var(--accent-soft); }
   .no-js .site-nav, html:not(.js) .site-nav { position: static; opacity: 1; visibility: visible; transform: none; }
 
-  .profile { grid-template-columns: auto minmax(0, 1fr); padding: 16px; gap: 14px 16px; }
+  .profile { grid-template-columns: minmax(0, 1fr); padding: 18px 16px 16px; gap: 14px; }
   .profile-photo { width: 72px; height: 72px; }
   .profile-name { font-size: 1.1rem; }
   .profile-links { grid-column: 1 / -1; grid-template-columns: 1fr 1fr; }
